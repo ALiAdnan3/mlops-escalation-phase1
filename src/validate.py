@@ -174,7 +174,8 @@ def main() -> int:
 
     report_path = Path(vcfg["report"])
     report_path.parent.mkdir(parents=True, exist_ok=True)
-    report_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    # newline="\n": same bytes on every OS, so the hash in dvc.lock matches a fresh git checkout
+    report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8", newline="\n")
 
     out = Path(vcfg["output"])
     if not report["passed"]:
