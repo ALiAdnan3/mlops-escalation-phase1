@@ -1,0 +1,44 @@
+# Owner: Member A. Verified against data/raw/bitext.parquet at hf_revision 430d1a89bd (2026-11-21):
+# 26,872 rows, 27 intents, 11 categories. Do not edit without telling B (labels depend on intent names).
+categories:
+  - ACCOUNT
+  - CANCEL
+  - CONTACT
+  - DELIVERY
+  - FEEDBACK
+  - INVOICE
+  - ORDER
+  - PAYMENT
+  - REFUND
+  - SHIPPING
+  - SUBSCRIPTION
+
+# intent -> category (each intent belongs to exactly one category)
+intents:
+  create_account: ACCOUNT
+  delete_account: ACCOUNT
+  edit_account: ACCOUNT
+  recover_password: ACCOUNT
+  registration_problems: ACCOUNT
+  switch_account: ACCOUNT
+  check_cancellation_fee: CANCEL
+  contact_customer_service: CONTACT
+  contact_human_agent: CONTACT
+  delivery_options: DELIVERY
+  delivery_period: DELIVERY
+  complaint: FEEDBACK
+  review: FEEDBACK
+  check_invoice: INVOICE
+  get_invoice: INVOICE
+  cancel_order: ORDER
+  change_order: ORDER
+  place_order: ORDER
+  track_order: ORDER
+  check_payment_methods: PAYMENT
+  payment_issue: PAYMENT
+  check_refund_policy: REFUND
+  get_refund: REFUND
+  track_refund: REFUND
+  change_shipping_address: SHIPPING
+  set_up_shipping_address: SHIPPING
+  newsletter_subscription: SUBSCRIPTION

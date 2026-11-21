@@ -1,0 +1,31 @@
+# Each owner edits ONLY their own section. Seed is global and must never be hard-coded elsewhere.
+seed: 42
+
+# ---- Member A: data, DVC, validation ----
+ingest:
+  hf_dataset: bitext/Bitext-customer-support-llm-chatbot-training-dataset
+  hf_file: Bitext_Sample_Customer_Support_Training_Dataset_27K_responses-v11.csv
+  hf_revision: 430d1a89bd93bd1fa23c16f29dd53e73f0087443   # pinned commit, do not use "main"
+  output: data/raw/bitext.parquet
+
+validate:
+  input: data/raw/bitext.parquet
+  output: data/interim/validated.parquet
+  report: reports/validation.json
+  schema: configs/schema.yaml
+  min_text_len: 3
+  max_instruction_len: 500        # observed max 92
+  max_response_len: 3000          # observed max 2472 (112 rows > 2000)
+  max_duplicate_rate: 0.10        # exact (instruction, intent) dupes; observed 0.083 (templated queries)
+  min_rows_per_intent: 500        # observed min 950
+  min_total_rows: 20000           # observed 26872
+
+# ---- Member B: labels, splits, KB, baseline ----
+split: {}
+build_kb: {}
+baseline: {}
+
+# ---- Member C: features, training, evaluation, registry ----
+features: {}
+train: {}
+evaluate: {}
