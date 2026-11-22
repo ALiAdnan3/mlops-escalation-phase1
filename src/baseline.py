@@ -159,6 +159,8 @@ def log_to_mlflow(params: dict, cfg: dict, metrics: dict, tau: float, dv: str, m
 
 # ------------------------------------------------------------------ main
 def main() -> int:
+    # mlflow prints an emoji when a run ends; on Windows a piped stdout is cp1252 and crashes on it
+    sys.stdout.reconfigure(encoding="utf-8")
     params = yaml.safe_load(open("params.yaml", encoding="utf-8"))
     cfg = params["baseline"]
     processed = Path(cfg["splits_dir"])
