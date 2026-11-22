@@ -1,0 +1,24 @@
+{
+  "run_name": "train-tfidf-lr-ng12-C10",
+  "registered_model": "escalation-model",
+  "data_version": "cf19e755955d",
+  "threshold": 0.671056,
+  "val": {
+    "precision": 0.95539,
+    "recall": 0.979981,
+    "f1": 0.967529,
+    "pr_auc": 0.993506,
+    "recall_R1": 0.993333,
+    "recall_R2": 0.966555,
+    "recall_R3": 0.98
+  },
+  "test": {
+    "precision": 0.978178,
+    "recall": 0.983779,
+    "f1": 0.980971,
+    "pr_auc": 0.996322,
+    "recall_R1": 0.983333,
+    "recall_R2": 0.976589,
+    "recall_R3": 0.988864
+  }
+}

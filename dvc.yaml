@@ -74,14 +74,21 @@ stages:
       - reports/baseline_metrics.json:
           cache: false
 
-  # train:                                  # Member C
-  #   cmd: python src/train.py
-  #   deps: [src/train.py, src/features.py, data/processed]
-  #   params: [seed, features, train]
-
-  # evaluate:                               # Member C
-  #   cmd: python src/evaluate.py
-  #   metrics: [{reports/registered_metrics.json: {cache: false}}]
-
-  # register:                               # Member C
-  #   cmd: python src/register.py
+  train:                                    # Member C
+    cmd: python -m src.train
+    deps:
+      - src/train.py
+      - src/model.py
+      - src/metrics.py
+      - src/split.py
+      - src/baseline.py
+      - data/processed/train.parquet
+      - data/processed/val.parquet
+      - data/processed/test.parquet
+      - data/processed/kb.parquet
+    params:
+      - seed
+      - train
+    metrics:
+      - reports/registered_metrics.json:
+          cache: false

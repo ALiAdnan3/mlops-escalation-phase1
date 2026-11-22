@@ -204,3 +204,70 @@ stages:
       hash: md5
       md5: 5fa9557f7537babd88d21979ba834049
       size: 649
+  train:
+    cmd: python -m src.train
+    deps:
+    - path: data/processed/kb.parquet
+      hash: md5
+      md5: 0e66b2630cb678b1c22c4310bb48abdf
+      size: 270488
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 5d09b33aa03d68c1c7b57caaf12707be
+      size: 111185
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 8258ccf15e6a6a0e11bac853876a0eda
+      size: 436809
+    - path: data/processed/val.parquet
+      hash: md5
+      md5: 46193ee9e72664dd8fb8685c5ef3350d
+      size: 111250
+    - path: src/baseline.py
+      hash: md5
+      md5: 34998bca9c4772d2ba61b441974dc416
+      size: 8260
+    - path: src/metrics.py
+      hash: md5
+      md5: 87dadef396d6ddb5ce07a7bf2acf02ca
+      size: 2001
+    - path: src/model.py
+      hash: md5
+      md5: ea7516cffb909b72352d2027185c68ac
+      size: 1122
+    - path: src/split.py
+      hash: md5
+      md5: f40207d4b2379440b0e7d85eab994c1d
+      size: 6504
+    - path: src/train.py
+      hash: md5
+      md5: c681bce5c8e6d2629d15702ac48d57ef
+      size: 7917
+    params:
+      params.yaml:
+        seed: 42
+        train:
+          splits_dir: data/processed
+          sweep:
+            ngram_range:
+            - - 1
+              - 1
+            - - 1
+              - 2
+            C:
+            - 0.1
+            - 1.0
+            - 10.0
+          min_df: 2
+          max_features: 50000
+          class_weight: balanced
+          metrics: reports/registered_metrics.json
+          mlflow_experiment: escalation-phase1
+          registered_model: escalation-model
+          tracking_uri: 
+            https://dagshub.com/ALiAdnan3/mlops-escalation-phase1.mlflow
+    outs:
+    - path: reports/registered_metrics.json
+      hash: md5
+      md5: 5db3b28c9865b9b70bd2837dbbf80235
+      size: 523
