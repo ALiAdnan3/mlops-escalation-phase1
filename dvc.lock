@@ -58,3 +58,149 @@ stages:
       hash: md5
       md5: 7a57cda1aa013f03e5915da106772f28
       size: 1287
+  split:
+    cmd: python -m src.split
+    deps:
+    - path: configs/labels.yaml
+      hash: md5
+      md5: 17cacf79341c23d5f2925f48bf056afd
+      size: 833
+    - path: configs/schema.yaml
+      hash: md5
+      md5: 2c12a93951779c9c07626a17bc2ec93a
+      size: 1169
+    - path: data/interim/validated.parquet
+      hash: md5
+      md5: ed13512c9a46deb9ea0fdb6173346e28
+      size: 6055408
+    - path: src/labels.py
+      hash: md5
+      md5: b67d08acc0d4613ddef1caefff0aebad
+      size: 1827
+    - path: src/split.py
+      hash: md5
+      md5: f40207d4b2379440b0e7d85eab994c1d
+      size: 6504
+    params:
+      params.yaml:
+        seed: 42
+        split:
+          input: data/interim/validated.parquet
+          labels: configs/labels.yaml
+          schema: configs/schema.yaml
+          output_dir: data/processed
+          report: reports/split_report.json
+          group_threshold: 0.85
+          ngram_range:
+          - 3
+          - 5
+          fractions:
+            train: 0.7
+            val: 0.15
+            test: 0.15
+    outs:
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 5d09b33aa03d68c1c7b57caaf12707be
+      size: 111185
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 8258ccf15e6a6a0e11bac853876a0eda
+      size: 436809
+    - path: data/processed/val.parquet
+      hash: md5
+      md5: 46193ee9e72664dd8fb8685c5ef3350d
+      size: 111250
+    - path: reports/split_report.json
+      hash: md5
+      md5: 1731357a471c50bb4c7cc64727f9c7de
+      size: 578
+  build_kb:
+    cmd: python -m src.kb
+    deps:
+    - path: configs/labels.yaml
+      hash: md5
+      md5: 17cacf79341c23d5f2925f48bf056afd
+      size: 833
+    - path: data/interim/validated.parquet
+      hash: md5
+      md5: ed13512c9a46deb9ea0fdb6173346e28
+      size: 6055408
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 8258ccf15e6a6a0e11bac853876a0eda
+      size: 436809
+    - path: src/kb.py
+      hash: md5
+      md5: b50553c9036a8d0886bb91a37ac0ca21
+      size: 2399
+    - path: src/labels.py
+      hash: md5
+      md5: b67d08acc0d4613ddef1caefff0aebad
+      size: 1827
+    params:
+      params.yaml:
+        build_kb:
+          train: data/processed/train.parquet
+          validated: data/interim/validated.parquet
+          labels: configs/labels.yaml
+          output: data/processed/kb.parquet
+          kb_per_intent: 50
+        seed: 42
+    outs:
+    - path: data/processed/kb.parquet
+      hash: md5
+      md5: 0e66b2630cb678b1c22c4310bb48abdf
+      size: 270488
+  baseline:
+    cmd: python -m src.baseline
+    deps:
+    - path: data/processed/kb.parquet
+      hash: md5
+      md5: 0e66b2630cb678b1c22c4310bb48abdf
+      size: 270488
+    - path: data/processed/test.parquet
+      hash: md5
+      md5: 5d09b33aa03d68c1c7b57caaf12707be
+      size: 111185
+    - path: data/processed/train.parquet
+      hash: md5
+      md5: 8258ccf15e6a6a0e11bac853876a0eda
+      size: 436809
+    - path: data/processed/val.parquet
+      hash: md5
+      md5: 46193ee9e72664dd8fb8685c5ef3350d
+      size: 111250
+    - path: src/baseline.py
+      hash: md5
+      md5: 34998bca9c4772d2ba61b441974dc416
+      size: 8260
+    - path: src/metrics.py
+      hash: md5
+      md5: 87dadef396d6ddb5ce07a7bf2acf02ca
+      size: 2001
+    - path: src/split.py
+      hash: md5
+      md5: f40207d4b2379440b0e7d85eab994c1d
+      size: 6504
+    params:
+      params.yaml:
+        baseline:
+          kb: data/processed/kb.parquet
+          splits_dir: data/processed
+          bm25_k1: 1.5
+          bm25_b: 0.75
+          keyword_regex: 
+            \b(human|agent|operator|representative|assistant|someone|manager|supervisor|chat|complain\w*|claim\w*)\b
+          tau_quantiles: 101
+          metrics: reports/baseline_metrics.json
+          mlflow_experiment: escalation-phase1
+          run_name: baseline-bm25
+          tracking_uri: 
+            https://dagshub.com/ALiAdnan3/mlops-escalation-phase1.mlflow
+        seed: 42
+    outs:
+    - path: reports/baseline_metrics.json
+      hash: md5
+      md5: 5fa9557f7537babd88d21979ba834049
+      size: 649

@@ -1,0 +1,42 @@
+{
+  "group_threshold": 0.85,
+  "n_rows": 26872,
+  "n_groups": 7976,
+  "largest_groups": [
+    299,
+    250,
+    186,
+    176,
+    173
+  ],
+  "singleton_share": 0.7499,
+  "rows": {
+    "train": 18809,
+    "val": 4035,
+    "test": 4028
+  },
+  "share": {
+    "train": 0.6999,
+    "val": 0.1502,
+    "test": 0.1499
+  },
+  "positive_rate": {
+    "train": 0.2601,
+    "val": 0.26,
+    "test": 0.2602
+  },
+  "per_intent_share_range": {
+    "train": [
+      0.6994,
+      0.7005
+    ],
+    "val": [
+      0.1497,
+      0.1505
+    ],
+    "test": [
+      0.1494,
+      0.1503
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "run_name": "baseline-bm25",
+  "tau": 1.8033794690933729,
+  "data_version": "cf19e755955d",
+  "val": {
+    "intent_hit_at_1": 0.738075,
+    "intent_hit_at_5": 0.925802,
+    "mrr": 0.819714,
+    "precision": 0.337062,
+    "recall": 0.632031,
+    "f1": 0.439655,
+    "pr_auc": 0.501404,
+    "recall_R1": 0.686667,
+    "recall_R2": 0.575251,
+    "recall_R3": 0.633333
+  },
+  "test": {
+    "intent_hit_at_1": 0.722828,
+    "intent_hit_at_5": 0.907516,
+    "mrr": 0.804541,
+    "precision": 0.34877,
+    "recall": 0.689885,
+    "f1": 0.463313,
+    "pr_auc": 0.553737,
+    "recall_R1": 0.82,
+    "recall_R2": 0.548495,
+    "recall_R3": 0.697105
+  }
+}

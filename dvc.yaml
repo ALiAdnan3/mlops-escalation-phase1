@@ -24,23 +24,55 @@ stages:
       - reports/validation.json:
           cache: false
 
-  # split:                                  # Member B
-  #   cmd: python src/split.py
-  #   deps: [src/split.py, src/labels.py, configs/labels.yaml, data/interim/validated.parquet]
-  #   params: [seed, split]
-  #   outs: [data/processed/train.parquet, data/processed/val.parquet, data/processed/test.parquet]
+  split:                                    # Member B
+    # run as a module (-m) so `from src.labels import ...` resolves from the repo root
+    cmd: python -m src.split
+    deps:
+      - src/split.py
+      - src/labels.py
+      - configs/labels.yaml
+      - configs/schema.yaml
+      - data/interim/validated.parquet
+    params:
+      - seed
+      - split
+    outs:
+      - data/processed/train.parquet
+      - data/processed/val.parquet
+      - data/processed/test.parquet
+      - reports/split_report.json:
+          cache: false
 
-  # build_kb:                               # Member B
-  #   cmd: python src/kb.py
-  #   deps: [src/kb.py, data/processed/train.parquet]
-  #   params: [build_kb]
-  #   outs: [data/processed/kb.parquet]
+  build_kb:                                 # Member B
+    cmd: python -m src.kb
+    deps:
+      - src/kb.py
+      - src/labels.py
+      - configs/labels.yaml
+      - data/processed/train.parquet
+      - data/interim/validated.parquet
+    params:
+      - seed
+      - build_kb
+    outs:
+      - data/processed/kb.parquet
 
-  # baseline:                               # Member B
-  #   cmd: python src/baseline.py
-  #   deps: [src/baseline.py, data/processed]
-  #   params: [seed, baseline]
-  #   metrics: [{reports/baseline_metrics.json: {cache: false}}]
+  baseline:                                 # Member B (logs MLflow run `baseline-bm25`)
+    cmd: python -m src.baseline
+    deps:
+      - src/baseline.py
+      - src/metrics.py
+      - src/split.py
+      - data/processed/train.parquet
+      - data/processed/val.parquet
+      - data/processed/test.parquet
+      - data/processed/kb.parquet
+    params:
+      - seed
+      - baseline
+    metrics:
+      - reports/baseline_metrics.json:
+          cache: false
 
   # train:                                  # Member C
   #   cmd: python src/train.py
