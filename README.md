@@ -47,6 +47,37 @@ corrupted copies of a 54-row real fixture (missing column, null/unknown intent, 
 text, wrong dtype, overlong text, intent/category mismatch, duplicate flood, missing intent, bad flags)
 and asserts each fails with a clear message, and that the stage exits non-zero without writing output.
 
+## Labels, leak-free splits, KB and baseline (Member B)
+
+**Labels** (`configs/labels.yaml`, frozen): `label_escalate` is a rule on the Bitext intent.
+R1 human/complaint (`contact_human_agent`, `complaint`), R2 high-risk (`payment_issue`, `delete_account`),
+R3 out of KB (`switch_account`, `newsletter_subscription`, `review`), R0 everything else. Positive rate 26.0%.
+
+**Split** (`split` stage, `src/split.py`). Bitext queries are templated, so near-identical twins exist
+("i want assistance canceling order" / "i need assistance canceling order"); a random row split would leak
+15.5% of test queries as exact copies of train queries. Instead:
+1. normalise queries (lowercase, drop `{{placeholders}}`, digits, punctuation);
+2. within each intent, link queries whose TF-IDF character n-gram cosine is >= 0.85 and take connected
+   components as `group_id` (threshold justified in `reports/eda.md`);
+3. assign whole groups to train/val/test (70/15/15) with a greedy per-intent fill, so every intent and the
+   positive rate (26.0%) are balanced in every split.
+
+**KB** (`build_kb` stage, `src/kb.py`): response texts of **train rows only**, R3 intents removed (so those
+queries have no answer and should escalate), de-duplicated, capped at 50 per intent: 1,200 entries.
+
+**Leakage evidence** (`pytest tests/test_split.py`): no `group_id` shared across splits; no identical
+normalised query across splits; no same-intent pair with similarity >= 0.85 across splits; every KB entry is a
+train row; no R3 intent in the KB; labels equal the YAML rules; balanced shares; same seed gives identical files.
+
+**Baseline, run #0** (`baseline` stage, `src/baseline.py`): BM25 over the KB; escalate if the query contains
+an explicit human/complaint keyword or the top-1 BM25 score per query token is below tau (tuned on val only).
+Metrics (shared code in `src/metrics.py`): intent_hit_at_1/5 and MRR on in-KB queries; escalation precision,
+recall, F1, PR-AUC on all queries. Written to `reports/baseline_metrics.json` and logged to MLflow as `baseline-bm25`.
+
+**MLflow credentials.** Runs go to DagsHub when `DAGSHUB_USERNAME` and `DAGSHUB_TOKEN` are set (environment or
+a git-ignored `.env`, see `.env.example`). Without them the stage logs to a local `sqlite:///mlflow.db`, so
+graders can run `dvc repro` with no account. All team runs used for submission must be on DagsHub.
+
 ## DVC setup (team members)
 
 Data is tracked by DVC (`dvc.yaml` + `dvc.lock` in git, file contents in the DagsHub remote).
@@ -83,9 +114,10 @@ Graders do not need DagsHub access: `dvc repro` regenerates all data from the pi
 
 ```
 data/{raw,interim,processed}/   DVC-tracked stage outputs
-configs/schema.yaml             frozen intents/categories (A)    configs/labels.yaml (B)
+configs/schema.yaml             frozen intents/categories (A)
+configs/labels.yaml             frozen escalation rules R0-R3 (B)
 params.yaml                     one section per owner; global seed = 42
 src/                            one script per pipeline stage
 tests/                          schema, leakage, label, pipeline tests
-reports/                        validation.json and later metrics
+reports/                        validation.json, eda.md, split_report.json, baseline_metrics.json
 ```
