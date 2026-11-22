@@ -21,7 +21,16 @@ validate:
   min_total_rows: 20000           # observed 26872
 
 # ---- Member B: labels, splits, KB, baseline ----
-split: {}
+split:
+  input: data/interim/validated.parquet
+  labels: configs/labels.yaml
+  schema: configs/schema.yaml
+  output_dir: data/processed
+  report: reports/split_report.json
+  group_threshold: 0.85          # char n-gram cosine; 0.8 chains into ~800-row groups, see reports/eda.md
+  ngram_range: [3, 5]
+  fractions: {train: 0.70, val: 0.15, test: 0.15}
+
 build_kb: {}
 baseline: {}
 
