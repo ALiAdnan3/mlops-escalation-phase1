@@ -14,3 +14,9 @@ pytest==8.3.4
 boto3==1.43.117
 aiobotocore==3.10.0
 s3fs==2026.9.0
+# --- labels / splits / KB / baseline (Member B) ---
+scikit-learn==1.9.1
+scipy==1.17.1
+rank_bm25==0.2.2
+mlflow==2.22.5      # 2.x: DagsHub-hosted registry with model stages (Staging); C confirms in C1
+sqlalchemy==2.0.43  # mlflow 2.22 cannot import sqlalchemy 2.1 (local sqlite fallback crashes)

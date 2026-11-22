@@ -38,7 +38,18 @@ build_kb:
   output: data/processed/kb.parquet
   kb_per_intent: 50              # cap per in-KB intent (24 intents after dropping R3 -> <= 1200 entries)
 
-baseline: {}
+baseline:
+  kb: data/processed/kb.parquet
+  splits_dir: data/processed
+  bm25_k1: 1.5
+  bm25_b: 0.75
+  # escalate if the query matches this (case-insensitive) or top-1 BM25 score per query token < tau
+  keyword_regex: "\\b(human|agent|operator|representative|assistant|someone|manager|supervisor|chat|complain\\w*|claim\\w*)\\b"   # picked on TRAIN precision, see reports/eda.md
+  tau_quantiles: 101             # candidate tau values = quantiles of val confidences
+  metrics: reports/baseline_metrics.json
+  mlflow_experiment: escalation-phase1
+  run_name: baseline-bm25
+  tracking_uri: https://dagshub.com/ALiAdnan3/mlops-escalation-phase1.mlflow
 
 # ---- Member C: features, training, evaluation, registry ----
 features: {}
