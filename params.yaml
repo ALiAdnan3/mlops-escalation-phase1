@@ -31,7 +31,13 @@ split:
   ngram_range: [3, 5]
   fractions: {train: 0.70, val: 0.15, test: 0.15}
 
-build_kb: {}
+build_kb:
+  train: data/processed/train.parquet
+  validated: data/interim/validated.parquet   # source of the response text (train rows only)
+  labels: configs/labels.yaml
+  output: data/processed/kb.parquet
+  kb_per_intent: 50              # cap per in-KB intent (24 intents after dropping R3 -> <= 1200 entries)
+
 baseline: {}
 
 # ---- Member C: features, training, evaluation, registry ----
