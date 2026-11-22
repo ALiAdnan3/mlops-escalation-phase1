@@ -1,0 +1,18 @@
+# Owner: Member B. Escalation labels are a deterministic function of the Bitext `intent`.
+# FROZEN on Day 1: changing this changes every split, KB and metric downstream (needs all 3 members).
+# Intent names verified against configs/schema.yaml (A, revision 430d1a89bd).
+#
+# label_escalate = 1 if the intent is in R1, R2 or R3, else 0.
+# label_rule     = the rule that fired (R0 = bot answers itself).
+rules:
+  R1:   # explicit human request or complaint: customer asks for a person or is unhappy
+    - contact_human_agent
+    - complaint
+  R2:   # high-risk: financial dispute or irreversible action
+    - payment_issue
+    - delete_account
+  R3:   # out of knowledge base: removed from the KB on purpose, so the bot has no answer
+    - switch_account
+    - newsletter_subscription
+    - review
+default_rule: R0  # all other intents
